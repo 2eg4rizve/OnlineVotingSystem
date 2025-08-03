@@ -11,5 +11,7 @@ namespace OnlineVotingSystem.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<VotingOccasion> VotingOccasions { get; set; }
+
+        public DbSet<VotingCategory> VotingCategories { get; set; }
     }
 }
