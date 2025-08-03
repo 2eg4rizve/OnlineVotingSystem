@@ -26,6 +26,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserManager, UserManager>();
 
+builder.Services.AddScoped<IVotingOccasionRepository, VotingOccasionRepository>();
+builder.Services.AddScoped<IVotingOccasionManager, VotingOccasionManager>();
+
+
 // JWT Authentication
 var key = builder.Configuration["Jwt:Key"];
 
