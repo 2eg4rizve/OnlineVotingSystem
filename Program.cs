@@ -33,6 +33,10 @@ builder.Services.AddScoped<IVotingOccasionManager, VotingOccasionManager>();
 builder.Services.AddScoped<IVotingCategoryRepository, VotingCategoryRepository>();
 builder.Services.AddScoped<IVotingCategoryManager, VotingCategoryManager>();
 
+builder.Services.AddScoped<IStartVotingRepository, StartVotingRepository>();
+builder.Services.AddScoped<IStartVotingManager, StartVotingManager>();
+
+
 // 3️⃣ JWT Authentication Configuration
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
@@ -112,3 +116,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+//dotnet ef migrations add AddVotingCategory
+//dotnet ef database update
