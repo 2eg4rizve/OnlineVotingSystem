@@ -36,6 +36,10 @@ builder.Services.AddScoped<IVotingCategoryManager, VotingCategoryManager>();
 builder.Services.AddScoped<IStartVotingRepository, StartVotingRepository>();
 builder.Services.AddScoped<IStartVotingManager, StartVotingManager>();
 
+builder.Services.AddScoped<IApplyVoteRepository, ApplyVoteRepository>();
+builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
+
+
 
 // 3️⃣ JWT Authentication Configuration
 var jwtKey = builder.Configuration["Jwt:Key"];
