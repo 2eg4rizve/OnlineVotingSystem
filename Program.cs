@@ -39,6 +39,10 @@ builder.Services.AddScoped<IStartVotingManager, StartVotingManager>();
 builder.Services.AddScoped<IApplyVoteRepository, ApplyVoteRepository>();
 builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
 
+builder.Services.AddScoped<IVotingOccasionsLevelRepository, VotingOccasionsLevelRepository>();
+builder.Services.AddScoped<IVotingOccasionsLevelManager, VotingOccasionsLevelManager>();
+
+
 
 
 // 3️⃣ JWT Authentication Configuration
