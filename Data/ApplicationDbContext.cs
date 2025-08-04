@@ -20,5 +20,8 @@ namespace OnlineVotingSystem.Data
 
 
         public DbSet<VotingOccasionsLevel> VotingOccasionsLevels { get; set; }
+
+
+        public DbSet<VotingOccasionsLevelMap> VotingOccasionsLevelMaps { get; set; }
     }
 }

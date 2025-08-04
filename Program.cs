@@ -42,6 +42,10 @@ builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
 builder.Services.AddScoped<IVotingOccasionsLevelRepository, VotingOccasionsLevelRepository>();
 builder.Services.AddScoped<IVotingOccasionsLevelManager, VotingOccasionsLevelManager>();
 
+builder.Services.AddScoped<IVotingOccasionsLevelMapRepository, VotingOccasionsLevelMapRepository>();
+builder.Services.AddScoped<IVotingOccasionsLevelMapManager, VotingOccasionsLevelMapManager>();
+
+
 
 
 
