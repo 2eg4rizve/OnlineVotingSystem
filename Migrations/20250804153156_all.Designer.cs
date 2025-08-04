@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingSystem.Data;
 
@@ -11,9 +12,11 @@ using OnlineVotingSystem.Data;
 namespace OnlineVotingSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804153156_all")]
+    partial class all
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,16 +33,10 @@ namespace OnlineVotingSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VoterId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<int>("VotingOccasionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VotingOccasionsLevelId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

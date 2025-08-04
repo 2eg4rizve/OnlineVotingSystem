@@ -14,16 +14,18 @@ namespace OnlineVotingSystem.Repositories.Repository
             _context = context;
         }
 
-        public async Task<bool> HasUserVotedAsync(int votingOccasionId, int userId)
-        {
-            return await _context.ApplyVotes
-                .AnyAsync(v => v.VotingOccasionId == votingOccasionId && v.UserId == userId);
-        }
-
-        public async Task AddVoteAsync(ApplyVote vote)
+        public async Task AddAsync(ApplyVote vote)
         {
             _context.ApplyVotes.Add(vote);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasAlreadyVotedAsync(int voterId, int votingOccasionId, int votingOccasionsLevelId)
+        {
+            return await _context.ApplyVotes.AnyAsync(v =>
+                v.VoterId == voterId &&
+                v.VotingOccasionId == votingOccasionId &&
+                v.VotingOccasionsLevelId == votingOccasionsLevelId);
         }
     }
 }

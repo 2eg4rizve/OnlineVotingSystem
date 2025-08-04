@@ -36,14 +36,18 @@ builder.Services.AddScoped<IVotingCategoryManager, VotingCategoryManager>();
 builder.Services.AddScoped<IStartVotingRepository, StartVotingRepository>();
 builder.Services.AddScoped<IStartVotingManager, StartVotingManager>();
 
-builder.Services.AddScoped<IApplyVoteRepository, ApplyVoteRepository>();
-builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
+
 
 builder.Services.AddScoped<IVotingOccasionsLevelRepository, VotingOccasionsLevelRepository>();
 builder.Services.AddScoped<IVotingOccasionsLevelManager, VotingOccasionsLevelManager>();
 
 builder.Services.AddScoped<IVotingOccasionsLevelMapRepository, VotingOccasionsLevelMapRepository>();
 builder.Services.AddScoped<IVotingOccasionsLevelMapManager, VotingOccasionsLevelMapManager>();
+
+
+builder.Services.AddScoped<IApplyVoteRepository, ApplyVoteRepository>();
+builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
+builder.Services.AddHttpContextAccessor();
 
 
 

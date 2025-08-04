@@ -1,5 +1,6 @@
-﻿using OnlineVotingSystem.Entities.RequestEntity;
-using OnlineVotingSystem.Entities.ResponseEntity;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using OnlineVotingSystem.Entities.RequestEntity;
 using OnlineVotingSystem.Managers.Interface;
 using OnlineVotingSystem.Model;
 using OnlineVotingSystem.Repositories.Interface;
@@ -9,40 +10,43 @@ namespace OnlineVotingSystem.Managers.Manager
     public class ApplyVoteManager : IApplyVoteManager
     {
         private readonly IApplyVoteRepository _repo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApplyVoteManager(IApplyVoteRepository repo)
+        public ApplyVoteManager(IApplyVoteRepository repo, IHttpContextAccessor httpContextAccessor)
         {
             _repo = repo;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<CommonResponse> ApplyVoteAsync(ApplyVoteRequest request)
+        public async Task<string> ApplyVoteAsync(ApplyVoteRequest request)
         {
-            var alreadyVoted = await _repo.HasUserVotedAsync(request.VotingOccasionId, request.UserId);
+            int userId = GetCurrentUserId();
+            if (userId == 0)
+                return "Unauthorized: Could not extract user ID from token.";
 
+            bool alreadyVoted = await _repo.HasAlreadyVotedAsync(userId, request.VotingOccasionId, request.VotingOccasionsLevelId);
             if (alreadyVoted)
-            {
-                return new CommonResponse
-                {
-                    status_code = 400,
-                    status = "Error",
-                    message = "User has already voted in this occasion."
-                };
-            }
+                return "You have already voted in this level of the occasion.";
 
             var vote = new ApplyVote
             {
                 VotingOccasionId = request.VotingOccasionId,
-                UserId = request.UserId
+                VotingOccasionsLevelId = request.VotingOccasionsLevelId,
+                PersonId = request.PersonId,
+                VoterId = userId
             };
 
-            await _repo.AddVoteAsync(vote);
+            await _repo.AddAsync(vote);
+            return "Vote cast successfully.";
+        }
 
-            return new CommonResponse
-            {
-                status_code = 200,
-                status = "Success",
-                message = "Vote successfully applied."
-            };
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || string.IsNullOrWhiteSpace(userIdClaim.Value))
+                return 0;
+
+            return int.TryParse(userIdClaim.Value, out int id) ? id : 0;
         }
     }
 }
