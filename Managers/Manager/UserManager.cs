@@ -83,9 +83,10 @@ namespace OnlineVotingSystem.Managers.Manager
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, user.Name),           // Add name
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
-            };
+             };
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

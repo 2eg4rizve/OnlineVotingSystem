@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineVotingSystem.Entities.RequestEntity;
 using OnlineVotingSystem.Managers.Interface;
 
@@ -6,6 +7,7 @@ namespace OnlineVotingSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")] // ✅ Only Admins can access
     public class VotingOccasionController : ControllerBase
     {
         private readonly IVotingOccasionManager _manager;

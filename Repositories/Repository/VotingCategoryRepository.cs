@@ -53,3 +53,5 @@ namespace OnlineVotingSystem.Repositories.Repository
         }
     }
 }
+//dotnet ef migrations add AddVotingCategory
+//dotnet ef database update
