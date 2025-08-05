@@ -35,5 +35,19 @@ namespace OnlineVotingSystem.Repositories.Repository
                 map.VotingOccasionsLevelId == votingOccasionsLevelId &&
                 map.PersonId == personId);
         }
+
+        public async Task<(DateTime StartTime, DateTime EndTime)?> GetVotingTimeAsync(int votingOccasionId)
+        {
+            var voting = await _context.StartVotings
+                .Where(s => s.VotingOccasionId == votingOccasionId)
+                .Select(s => new { s.StartTime, s.EndTime })
+                .FirstOrDefaultAsync();
+
+            if (voting == null)
+                return null;
+
+            return (voting.StartTime, voting.EndTime);
+        }
+
     }
 }
