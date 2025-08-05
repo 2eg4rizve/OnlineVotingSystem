@@ -24,6 +24,15 @@ namespace OnlineVotingSystem.Managers.Manager
             if (userId == 0)
                 return "Unauthorized: Could not extract user ID from token.";
 
+            bool isValidCandidate = await _repo.IsValidCandidateAsync(
+                request.VotingOccasionId,
+                request.VotingOccasionsLevelId,
+                request.PersonId
+            );
+
+            if (!isValidCandidate)
+                return "Invalid vote: This person is not a candidate for the selected level or occasion.";
+
             bool alreadyVoted = await _repo.HasAlreadyVotedAsync(userId, request.VotingOccasionId, request.VotingOccasionsLevelId);
             if (alreadyVoted)
                 return "You have already voted in this level of the occasion.";

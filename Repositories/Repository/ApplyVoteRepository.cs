@@ -27,5 +27,13 @@ namespace OnlineVotingSystem.Repositories.Repository
                 v.VotingOccasionId == votingOccasionId &&
                 v.VotingOccasionsLevelId == votingOccasionsLevelId);
         }
+
+        public async Task<bool> IsValidCandidateAsync(int votingOccasionId, int votingOccasionsLevelId, int personId)
+        {
+            return await _context.VotingOccasionsLevelMaps.AnyAsync(map =>
+                map.VotingOccasionId == votingOccasionId &&
+                map.VotingOccasionsLevelId == votingOccasionsLevelId &&
+                map.PersonId == personId);
+        }
     }
 }
