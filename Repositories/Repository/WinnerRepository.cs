@@ -135,29 +135,68 @@ namespace OnlineVotingSystem.Repositories.Repository
 
             //return await query.ToListAsync();
 
-            var query = (
-                from vote in _context.ApplyVotes
-                join user in _context.Users on vote.PersonId equals user.Id
-                join occasion in _context.VotingOccasions on vote.VotingOccasionId equals occasion.Id
-                join level in _context.VotingOccasionsLevels on vote.VotingOccasionsLevelId equals level.Id
-                where vote.VotingOccasionId == votingOccasionId &&
-                      vote.VotingOccasionsLevelId == votingOccasionsLevelId
-                group new { vote, user, occasion, level } by vote.PersonId into g
-                orderby g.Count() descending
-                select new WinnerDetailedResultDto
-                {
-                    PersonId = g.Key,
-                    Name = g.First().user.Name,
-                    Email = g.First().user.Email,
-                    VotingOccasionId = votingOccasionId,
-                    VotingOccasionName = g.First().occasion.Name,
-                    VotingOccasionsLevelId = votingOccasionsLevelId,
-                    LevelName = g.First().level.LevelName,
-                    TotalVotes = g.Count()
-                }
-            );
+            //var query = (
+            //    from vote in _context.ApplyVotes
+            //    join user in _context.Users on vote.PersonId equals user.Id
+            //    join occasion in _context.VotingOccasions on vote.VotingOccasionId equals occasion.Id
+            //    join level in _context.VotingOccasionsLevels on vote.VotingOccasionsLevelId equals level.Id
+            //    where vote.VotingOccasionId == votingOccasionId &&
+            //          vote.VotingOccasionsLevelId == votingOccasionsLevelId
+            //    group new { vote, user, occasion, level } by vote.PersonId into g
+            //    orderby g.Count() descending
+            //    select new WinnerDetailedResultDto
+            //    {
+            //        PersonId = g.Key,
+            //        Name = g.First().user.Name,
+            //        Email = g.First().user.Email,
+            //        VotingOccasionId = votingOccasionId,
+            //        VotingOccasionName = g.First().occasion.Name,
+            //        VotingOccasionsLevelId = votingOccasionsLevelId,
+            //        LevelName = g.First().level.LevelName,
+            //        TotalVotes = g.Count()
+            //    }
+            //);
 
-            return await query.ToListAsync();
+            //return await query.ToListAsync();
+
+
+            var winners = await _context.ApplyVotes
+            .Where(vote => vote.VotingOccasionId == votingOccasionId &&
+                           vote.VotingOccasionsLevelId == votingOccasionsLevelId)
+            .Join(
+                _context.Users,
+                vote => vote.PersonId,
+                user => user.Id,
+                (vote, user) => new { vote, user }
+            )
+            .Join(
+                _context.VotingOccasions,
+                x => x.vote.VotingOccasionId,
+                occasion => occasion.Id,
+                (x, occasion) => new { x.vote, x.user, occasion }
+            )
+            .Join(
+                _context.VotingOccasionsLevels,
+                x => x.vote.VotingOccasionsLevelId,
+                level => level.Id,
+                (x, level) => new { x.vote, x.user, x.occasion, level }
+            )
+            .GroupBy(x => x.vote.PersonId)
+            .Select(g => new WinnerDetailedResultDto
+            {
+                PersonId = g.Key,
+                Name = g.First().user.Name,
+                Email = g.First().user.Email,
+                VotingOccasionId = votingOccasionId,
+                VotingOccasionName = g.First().occasion.Name,
+                VotingOccasionsLevelId = votingOccasionsLevelId,
+                LevelName = g.First().level.LevelName,
+                TotalVotes = g.Count()
+            })
+            .OrderByDescending(w => w.TotalVotes)
+            .ToListAsync();
+
+            return winners;
 
 
 
