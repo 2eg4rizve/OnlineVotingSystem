@@ -59,35 +59,57 @@ namespace OnlineVotingSystem.Repositories.Repository
 
             //return result;
 
-                return await _context.ApplyVotes
-                .Where(v => v.VotingOccasionId == votingOccasionId &&
-                            v.VotingOccasionsLevelId == votingOccasionsLevelId)
-                .GroupBy(v => new { v.PersonId, v.VotingOccasionId, v.VotingOccasionsLevelId })
-                .Select(g => new WinnerDetailedResultDto
-                {
-                    VotingOccasionId = g.Key.VotingOccasionId,
-                    VotingOccasionName = _context.VotingOccasions
-                        .Where(vo => vo.Id == g.Key.VotingOccasionId)
-                        .Select(vo => vo.Name)
-                        .FirstOrDefault() ?? "Unknown",
-                    VotingOccasionsLevelId = g.Key.VotingOccasionsLevelId,
-                    LevelName = _context.VotingOccasionsLevels
-                        .Where(vol => vol.Id == g.Key.VotingOccasionsLevelId)
-                        .Select(vol => vol.LevelName)
-                        .FirstOrDefault() ?? "Unknown",
-                    PersonId = g.Key.PersonId,
-                    Name = _context.Users
-                        .Where(u => u.Id == g.Key.PersonId)
-                        .Select(u => u.Name)
-                        .FirstOrDefault() ?? "Unknown",
-                    Email = _context.Users
-                        .Where(u => u.Id == g.Key.PersonId)
-                        .Select(u => u.Email)
-                        .FirstOrDefault() ?? "Unknown",
-                    TotalVotes = g.Count()
-                })
-                .OrderByDescending(r => r.TotalVotes)
-                .ToListAsync();
+            //return await _context.ApplyVotes
+            //.Where(v => v.VotingOccasionId == votingOccasionId &&
+            //            v.VotingOccasionsLevelId == votingOccasionsLevelId)
+            //.GroupBy(v => new { v.PersonId, v.VotingOccasionId, v.VotingOccasionsLevelId })
+            //.Select(g => new WinnerDetailedResultDto
+            //{
+            //    VotingOccasionId = g.Key.VotingOccasionId,
+            //    VotingOccasionName = _context.VotingOccasions
+            //        .Where(vo => vo.Id == g.Key.VotingOccasionId)
+            //        .Select(vo => vo.Name)
+            //        .FirstOrDefault() ?? "Unknown",
+            //    VotingOccasionsLevelId = g.Key.VotingOccasionsLevelId,
+            //    LevelName = _context.VotingOccasionsLevels
+            //        .Where(vol => vol.Id == g.Key.VotingOccasionsLevelId)
+            //        .Select(vol => vol.LevelName)
+            //        .FirstOrDefault() ?? "Unknown",
+            //    PersonId = g.Key.PersonId,
+            //    Name = _context.Users
+            //        .Where(u => u.Id == g.Key.PersonId)
+            //        .Select(u => u.Name)
+            //        .FirstOrDefault() ?? "Unknown",
+            //    Email = _context.Users
+            //        .Where(u => u.Id == g.Key.PersonId)
+            //        .Select(u => u.Email)
+            //        .FirstOrDefault() ?? "Unknown",
+            //    TotalVotes = g.Count()
+            //})
+            //.OrderByDescending(r => r.TotalVotes)
+            //.ToListAsync();
+
+
+            var query = from vote in _context.ApplyVotes
+                        join user in _context.Users on vote.PersonId equals user.Id
+                        join occasion in _context.VotingOccasions on vote.VotingOccasionId equals occasion.Id
+                        join level in _context.VotingOccasionsLevels on vote.VotingOccasionsLevelId equals level.Id
+                        where vote.VotingOccasionId == votingOccasionId &&
+                              vote.VotingOccasionsLevelId == votingOccasionsLevelId
+                        group new { vote, user, occasion, level } by vote.PersonId into grouped
+                        select new WinnerDetailedResultDto
+                        {
+                            VotingOccasionId = votingOccasionId,
+                            VotingOccasionName = grouped.First().occasion.Name,
+                            VotingOccasionsLevelId = votingOccasionsLevelId,
+                            LevelName = grouped.First().level.LevelName,
+                            PersonId = grouped.Key,
+                            Name = grouped.First().user.Name,
+                            Email = grouped.First().user.Email,
+                            TotalVotes = grouped.Count()
+                        };
+
+            return await query.OrderByDescending(x => x.TotalVotes).ToListAsync();
         }
     }
 }
