@@ -50,6 +50,10 @@ builder.Services.AddScoped<IApplyVoteManager, ApplyVoteManager>();
 builder.Services.AddHttpContextAccessor();
 
 
+builder.Services.AddScoped<IWinnerRepository, WinnerRepository>();
+builder.Services.AddScoped<IWinnerManager, WinnerManager>();
+
+
 
 
 
